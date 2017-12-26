@@ -1,4 +1,5 @@
 import { Markov, MemoryStructure } from './markov';
+import { IAdaptor } from '../adaptor/adaptor';
 
 describe('Markov Class', () => {
   test('will learn()', () => {
@@ -51,5 +52,20 @@ describe('Markov Class', () => {
     expect(markov.printMemory()).toEqual(mockMemory);
     markov.clearMemory();
     expect(markov.printMemory()).toEqual({});
+  });
+
+  test('constructor() called with seed data', () => {
+    let mockMemory: MemoryStructure = {
+      '': ['foo'],
+      'foo': ['bar'],
+      'bar': ['bar']
+    };
+    let dataMock: IAdaptor = {
+      getData: () => mockMemory,
+      setData: (data) => null
+    };
+
+    let markov = new Markov(dataMock);
+    expect(markov.printMemory()).toEqual(mockMemory);
   });
 })

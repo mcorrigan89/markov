@@ -9,7 +9,6 @@ export interface IMarkov {
   clearMemory(): void;
   learn(txt: string): void;
   ask(length: number): string;
-  addMemoryAdaptor?(adaptor: IAdaptor): void;
   printMemory(): MemoryStructure;
 }
 
@@ -17,6 +16,12 @@ export class Markov implements IMarkov {
 
   private memory: MemoryStructure = {};
   private separator: string = '';
+
+  constructor(private datasource?: IAdaptor) {
+    if (this.datasource) {
+      this.memory = this.datasource.getData();
+    }
+  }
 
   public learn(txt: string) {
     let parts = txt.split(this.separator);
@@ -30,6 +35,8 @@ export class Markov implements IMarkov {
       prev = letter;
       return memory;
     }, this.memory)
+    if (this.datasource) 
+      this.datasource.setData(this.memory);
   }
 
   public seedAsk(seed: string, length: number) {
@@ -46,6 +53,8 @@ export class Markov implements IMarkov {
 
   public clearMemory() {
     this.memory = {};
+    if (this.datasource)
+      this.datasource.setData(this.memory);
   }
 
   public printMemory() {
